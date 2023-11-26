@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
+import axios from "axios";
 
-const Form = ({ input, setInput, getData, wishlistCount}) => {
+const Form = ({ input, setInput, getData, wishlistCount }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [basket, setBasket] = useState([]);
+
+  const getBasket = async () => {
+    const res = await axios.get("http://localhost:3000/cart");
+    setBasket(res?.data);
+  };
+
+  console.log(basket);
+  useEffect(() => {
+    getBasket();
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -78,9 +90,13 @@ const Form = ({ input, setInput, getData, wishlistCount}) => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          {basket.length > 0 &&
+            basket?.map((item) => (
+              <div>
+                <h1>{item.title}</h1>
+                <h1>{item.price}</h1>
+              </div>
+            ))}
         </Modal>
       </div>
     </div>
@@ -88,5 +104,3 @@ const Form = ({ input, setInput, getData, wishlistCount}) => {
 };
 
 export default Form;
-
-
